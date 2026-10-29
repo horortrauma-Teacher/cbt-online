@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Online - Informatika SMP</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-mono-timer {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- =========================================================================
+       1. HEADER SECTION
+       Menampilkan: Logo sekolah, Info Siswa, Mata Pelajaran, dan Countdown Timer
+       ========================================================================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+        
+        <!-- Logo & Identitas Ujian -->
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <!-- Logo Placeholder (SVG Tut Wuri Handayani / Sekolah) -->
+          <div class="h-11 w-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 14l9-5-9-5-9 5 9 5z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+          </div>
+          
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-bold text-slate-900 text-base leading-tight">SMP NEGERI 1 INDONESIA</h1>
+              <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">CBT 2026</span>
+            </div>
+            <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+              <span>👤 <strong>Ahmad Rizky</strong> (NISN: 0081293847)</span>
+              <span>•</span>
+              <span class="text-blue-600 font-medium">💻 Informatika SMP - Kelas IX</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="flex items-center justify-between w-full md:w-auto gap-4">
+          <!-- Pengatur Ukuran Font Soal -->
+          <div class="hidden sm:flex items-center bg-slate-100 rounded-lg p-1 text-xs text-slate-600 gap-1 border border-slate-200">
+            <span class="px-2 font-medium">Ukuran:</span>
+            <button onclick="changeFontSize('small')" class="px-2 py-1 rounded hover:bg-white hover:shadow-xs transition" title="Kecil">A-</button>
+            <button onclick="changeFontSize('normal')" class="px-2 py-1 rounded bg-white shadow-xs font-semibold text-blue-600" title="Normal">A</button>
+            <button onclick="changeFontSize('large')" class="px-2 py-1 rounded hover:bg-white hover:shadow-xs transition" title="Besar">A+</button>
+          </div>
+
+          <!-- Timer Card -->
+          <div id="timerCard" class="flex items-center gap-2.5 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-sm border border-slate-800 ml-auto md:ml-0">
+            <svg class="w-5 h-5 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Sisa Waktu</div>
+              <div id="countdownTimer" class="font-mono-timer text-lg font-bold tracking-wider text-emerald-400">
+                01:30:00
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. MAIN CONTENT & SIDEBAR CONTAINER
+       ========================================================================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- =====================================================================
+           AREA KONTEN UTAMA (SOAL, GAMBAR, OPSI JAWABAN, FOOTER AKSI)
+           Col-span 8 dari 12 di layar desktop
+           ===================================================================== -->
+      <section class="lg:col-span-8 flex flex-col gap-4">
+        
+        <!-- Kartu Soal -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          
+          <!-- Header Bar Soal -->
+          <div class="bg-slate-50 border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-bold bg-blue-600 text-white shadow-xs">
+                Soal No. <span id="currentQuestionNumberBadge" class="ml-1">1</span>
+              </span>
+              <span class="text-xs text-slate-500">dari <span id="totalQuestionsCount">10</span> Soal</span>
+            </div>
+            
+            <div id="doubtfulStatusBadge" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300">
+              <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              Ragu-ragu
+            </div>
+          </div>
+
+          <!-- Body Soal -->
+          <div id="questionBody" class="p-6 text-base text-slate-800 leading-relaxed transition-all duration-150">
+            
+            <!-- Teks Soal -->
+            <div id="questionText" class="font-medium text-slate-900 mb-4">
+              <!-- Render otomatis via JavaScript -->
+            </div>
+
+            <!-- Kontainer Gambar Soal (Opsional, ditampilkan jika soal memiliki gambar) -->
+            <div id="questionImageContainer" class="hidden mb-6">
+              <div class="p-2 border border-slate-200 rounded-xl bg-slate-50 max-w-lg mx-auto">
+                <img id="questionImage" src="" alt="Ilustrasi Soal" class="rounded-lg w-full h-auto object-contain max-h-72 mx-auto">
+                <p id="questionImageCaption" class="text-center text-xs text-slate-500 mt-1 italic"></p>
+              </div>
+            </div>
+
+            <!-- Opsi Jawaban Pilihan Ganda (A, B, C, D) -->
+            <div class="mt-4">
+              <p class="text-xs uppercase tracking-wider font-semibold text-slate-400 mb-3">Pilih salah satu jawaban:</p>
+              <div id="optionsContainer" class="space-y-3">
+                <!-- Di-render dinamis oleh JavaScript -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- =================================================================
+               4. FOOTER AKSI SOAL
+               Komponen: Soal Sebelumnya, Checkbox Ragu-ragu, Soal Selanjutnya, Selesai
+               ================================================================= -->
+          <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Tombol Soal Sebelumnya -->
+            <button id="btnPrev" onclick="navigateQuestion(-1)"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-2xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+              <span>Soal Sebelumnya</span>
+            </button>
+
+            <!-- Checkbox Ragu-ragu -->
+            <label class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100 text-amber-900 cursor-pointer select-none transition">
+              <input type="checkbox" id="doubtfulCheckbox" onchange="toggleDoubtfulCurrentQuestion()"
+                     class="w-4 h-4 text-amber-500 rounded border-amber-400 focus:ring-amber-400 focus:ring-offset-1">
+              <span class="text-sm font-semibold">Ragu-ragu</span>
+            </label>
+
+            <!-- Grup Tombol Kanan: Selanjutnya & Selesai -->
+            <div class="flex items-center gap-2">
+              <!-- Tombol Soal Selanjutnya -->
+              <button id="btnNext" onclick="navigateQuestion(1)"
+                      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-md shadow-blue-500/20">
+                <span>Soal Selanjutnya</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+
+              <!-- Tombol Selesai Ujian -->
+              <button id="btnFinish" onclick="openFinishModal()"
+                      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 transition shadow-md shadow-emerald-600/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span>Selesai Ujian</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           SIDEBAR NAVIGASI SOAL
+           Col-span 4 dari 12 di layar desktop
+           ===================================================================== -->
+      <aside class="lg:col-span-4 flex flex-col gap-4">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sticky top-24">
+          
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h2 class="font-bold text-slate-800 text-sm tracking-wide uppercase flex items-center gap-2">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              Navigasi Soal
+            </h2>
+            <span id="answeredStatsBadge" class="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md">
+              0 / 10 Terjawab
+            </span>
+          </div>
+
+          <!-- Petunjuk Keterangan Warna (Legend) -->
+          <div class="grid grid-cols-3 gap-2 text-xs mb-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-slate-200 border border-slate-300"></span>
+              <span class="text-slate-600">Kosong</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-600"></span>
+              <span class="text-slate-600">Dijawab</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-amber-400 border border-amber-500"></span>
+              <span class="text-slate-600">Ragu-ragu</span>
+            </div>
+          </div>
+
+          <!-- Grid Nomor Soal -->
+          <div id="questionNumberGrid" class="grid grid-cols-5 gap-2.5 max-h-[340px] overflow-y-auto pr-1">
+            <!-- Di-generate otomatis oleh JavaScript -->
+          </div>
+
+          <!-- Rekap Status Ringkas -->
+          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div>Sudah: <strong id="statAnswered" class="text-emerald-600">0</strong></div>
+            <div>Ragu: <strong id="statDoubtful" class="text-amber-500">0</strong></div>
+            <div>Belum: <strong id="statUnanswered" class="text-slate-600">10</strong></div>
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       MODAL KONFIRMASI SELESAI UJIAN
+       ========================================================================= -->
+  <div id="finishModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+      
+      <!-- Modal Header -->
+      <div class="p-6 bg-slate-50 border-b border-slate-100 text-center">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Konfirmasi Selesai Ujian</h3>
+        <p class="text-xs text-slate-500 mt-1">Periksa kembali ringkasan jawaban Anda sebelum mengirim ujian.</p>
+      </div>
+
+      <!-- Ringkasan Jawaban -->
+      <div class="p-6 space-y-3">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-100 text-sm">
+          <span>Sudah Dijawab</span>
+          <strong id="modalStatAnswered" class="text-base font-bold">0 Soal</strong>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-amber-50 text-amber-900 border border-amber-100 text-sm">
+          <span>Masih Ragu-ragu</span>
+          <strong id="modalStatDoubtful" class="text-base font-bold">0 Soal</strong>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 text-sm">
+          <span>Belum Dijawab (Kosong)</span>
+          <strong id="modalStatUnanswered" class="text-base font-bold">0 Soal</strong>
+        </div>
+
+        <p id="modalWarningText" class="text-xs text-amber-600 font-medium text-center pt-2">
+          <!-- Peringatan dinamis jika ada soal kosong / ragu -->
+        </p>
+      </div>
+
+      <!-- Modal Footer Action -->
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+        <button onclick="closeFinishModal()" 
+                class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-200 transition">
+          Kembali ke Ujian
+        </button>
+        <button onclick="submitExam()" 
+                class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition">
+          Ya, Kumpulkan Jawaban
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL HASIL SETELAH SELESAI
+       ========================================================================= -->
+  <div id="resultModal" class="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 text-center shadow-2xl">
+      <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900">Ujian Telah Berhasil Dikirim!</h3>
+      <p class="text-sm text-slate-600 mt-2">Terima kasih telah mengerjakan ujian dengan tertib dan jujur.</p>
+      
+      <div id="resultScoreCard" class="my-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-left text-sm space-y-2">
+        <!-- Rincian hasil ujian -->
+      </div>
+
+      <button onclick="window.location.reload()" 
+              class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+        Kembali ke Halaman Utama
+      </button>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================= -->
+  <script>
+    /* =========================================================================
+       DATA SOAL (Bisa Anda sesuaikan atau ambil via REST API/JSON)
+       Setiap item memiliki:
+       - id: ID unik soal
+       - question: Teks pertanyaan (bisa HTML)
+       - image: (Opsional) URL gambar ilustrasi
+       - imageCaption: (Opsional) Keterangan gambar
+       - options: Object pilihan ganda A, B, C, D
+       - correctAnswer: Kunci jawaban untuk simulasi penilaian
+       ========================================================================= */
+    const questionsData = [
+      {
+        id: 1,
+        question: "Perangkat keras (hardware) komputer yang berfungsi sebagai 'otak' pemroses seluruh instruksi data adalah...",
+        image: null,
+        options: {
+          A: "Hard Disk Drive (HDD)",
+          B: "Central Processing Unit (CPU)",
+          C: "Random Access Memory (RAM)",
+          D: "Power Supply Unit (PSU)"
+        },
+        correctAnswer: "B"
+      },
+      {
+        id: 2,
+        question: "Perhatikan gambar topologi jaringan berikut! Topologi jaringan yang menghubungkan setiap perangkat ke satu konsentrator/switch pusat seperti pada gambar disebut topologi...",
+        image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80",
+        imageCaption: "Ilustrasi Perangkat Jaringan Komputer & Kabel Data",
+        options: {
+          A: "Topologi Bus",
+          B: "Topologi Ring",
+          C: "Topologi Star",
+          D: "Topologi Mesh"
+        },
+        correctAnswer: "C"
+      },
+      {
+        id: 3,
+        question: "Urutan langkah-langkah logis dan terstruktur yang disusun untuk menyelesaikan suatu masalah komputasi dinamakan...",
+        image: null,
+        options: {
+          A: "Algoritma",
+          B: "Variabel",
+          C: "Pseudocode",
+          D: "Kompilator"
+        },
+        correctAnswer: "A"
+      },
+      {
+        id: 4,
+        question: "Protokol keamanan web yang ditandai dengan enkripsi SSL/TLS pada browser sehingga pertukaran data lebih aman adalah...",
+        image: null,
+        options: {
+          A: "HTTP (Hypertext Transfer Protocol)",
+          B: "FTP (File Transfer Protocol)",
+          C: "HTTPS (Hypertext Transfer Protocol Secure)",
+          D: "SMTP (Simple Mail Transfer Protocol)"
+        },
+        correctAnswer: "C"
+      },
+      {
+        id: 5,
+        question: "Berikut ini yang merupakan contoh sistem operasi open-source (sumber terbuka) adalah...",
+        image: null,
+        options: {
+          A: "Microsoft Windows 11",
+          B: "Apple macOS Sonoma",
+          C: "Ubuntu Linux",
+          D: "Apple iOS"
+        },
+        correctAnswer: "C"
+      },
+      {
+        id: 6,
+        question: "Dalam berpikir komputasional, proses memecah masalah yang kompleks menjadi bagian-bagian yang lebih kecil dan mudah dikelola disebut...",
+        image: null,
+        options: {
+          A: "Abstraksi (Abstraction)",
+          B: "Dekomposisi (Decomposition)",
+          C: "Pengenalan Pola (Pattern Recognition)",
+          D: "Algoritma (Algorithm Design)"
+        },
+        correctAnswer: "B"
+      },
+      {
+        id: 7,
+        question: "Satuan terkecil data digital dalam komputer yang bernilai angka biner 0 atau 1 adalah...",
+        image: null,
+        options: {
+          A: "Byte",
+          B: "Bit",
+          C: "Kilobyte (KB)",
+          D: "Megabyte (MB)"
+        },
+        correctAnswer: "B"
+      },
+      {
+        id: 8,
+        question: "Tindakan kejahatan digital untuk mencuri informasi sensitif seperti username, kata sandi, dan kartu kredit dengan menyamar sebagai institusi tepercaya melalui pesan palsu disebut...",
+        image: null,
+        options: {
+          A: "Phishing",
+          B: "DDoS Attack",
+          C: "Ransomware",
+          D: "Spyware"
+        },
+        correctAnswer: "A"
+      },
+      {
+        id: 9,
+        question: "Perhatikan fungsi rumus pada spreadsheet (Microsoft Excel / Google Sheets). Rumus yang digunakan untuk mencari nilai rata-rata dari sekumpulan data angka adalah...",
+        image: null,
+        options: {
+          A: "=SUM()",
+          B: "=COUNT()",
+          C: "=MAX()",
+          D: "=AVERAGE()"
+        },
+        correctAnswer: "D"
+      },
+      {
+        id: 10,
+        question: "Media transmisi data jaringan komputer nirkabel (wireless) yang paling umum digunakan pada area lokal (LAN) adalah...",
+        image: null,
+        options: {
+          A: "Kabel Fiber Optik",
+          B: "Kabel UTP Cat 6",
+          C: "Gelombang Radio Wi-Fi",
+          D: "Kabel Koaksial"
+        },
+        correctAnswer: "C"
+      }
+    ];
+
+    /* =========================================================================
+       STATE APLIKASI
+       Menyimpan status pengerjaan siswa selama ujian
+       ========================================================================= */
+    const examState = {
+      currentIndex: 0,             // Indeks soal yang sedang dibuka (0-based)
+      userAnswers: {},             // Format: { [soalId]: 'A' | 'B' | 'C' | 'D' }
+      doubtfulStatus: {},          // Format: { [soalId]: true | false }
+      totalSeconds: 90 * 60,       // 90 Menit diubah ke detik (5400 detik)
+      timerInterval: null          // Reference interval countdown
+    };
+
+    /* =========================================================================
+       INISIALISASI APLIKASI
+       Dijalankan saat halaman selesai dimuat
+       ========================================================================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("totalQuestionsCount").innerText = questionsData.length;
+      
+      // Render navigasi grid nomor soal
+      buildQuestionNavigationGrid();
+
+      // Render soal pertama
+      renderCurrentQuestion();
+
+      // Mulai countdown timer
+      startCountdown();
+    });
+
+    /* =========================================================================
+       FUNGSI 1: RENDER SOAL SAAT INI
+       Menampilkan teks soal, gambar (jika ada), opsi pilihan ganda, dan status ragu
+       ========================================================================= */
+    function renderCurrentQuestion() {
+      const q = questionsData[examState.currentIndex];
+      const questionNumber = examState.currentIndex + 1;
+
+      // Update nomor soal pada badge
+      document.getElementById("currentQuestionNumberBadge").innerText = questionNumber;
+
+      // Tampilkan Teks Soal
+      document.getElementById("questionText").innerHTML = q.question;
+
+      // Kelola Tampilan Gambar (jika soal memiliki gambar)
+      const imageContainer = document.getElementById("questionImageContainer");
+      const questionImage = document.getElementById("questionImage");
+      const imageCaption = document.getElementById("questionImageCaption");
+
+      if (q.image) {
+        questionImage.src = q.image;
+        imageCaption.innerText = q.imageCaption || "";
+        imageContainer.classList.remove("hidden");
+      } else {
+        imageContainer.classList.add("hidden");
+        questionImage.src = "";
+      }
+
+      // Render Opsi Jawaban (A, B, C, D)
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+
+      const selectedAnswer = examState.userAnswers[q.id];
+
+      // Loop membuat kartu opsi jawaban
+      Object.entries(q.options).forEach(([key, text]) => {
+        const isSelected = selectedAnswer === key;
+        
+        const optionButton = document.createElement("button");
+        optionButton.type = "button";
+        optionButton.onclick = () => selectAnswer(key);
+
+        // Styling responsif menggunakan Tailwind
+        optionButton.className = `w-full text-left p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-150 ${
+          isSelected 
+            ? "border-blue-600 bg-blue-50/90 text-blue-950 font-medium ring-2 ring-blue-500/30 shadow-xs" 
+            : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-800"
+        }`;
+
+        // Badge Huruf Opsi (A/B/C/D)
+        const badgeClass = isSelected
+          ? "bg-blue-600 text-white font-bold shadow-xs"
+          : "bg-slate-100 text-slate-700 font-semibold border border-slate-200";
+
+        optionButton.innerHTML = `
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm ${badgeClass}">
+            ${key}
+          </span>
+          <span class="pt-1 text-sm md:text-base leading-snug flex-1">${text}</span>
+          ${isSelected ? `
+            <span class="text-blue-600 pt-1">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </span>
+          ` : ''}
+        `;
+
+        optionsContainer.appendChild(optionButton);
+      });
+
+      // Update Status Checkbox Ragu-ragu
+      const isDoubtful = !!examState.doubtfulStatus[q.id];
+      const checkbox = document.getElementById("doubtfulCheckbox");
+      checkbox.checked = isDoubtful;
+
+      // Badge status ragu di header soal
+      const doubtfulBadge = document.getElementById("doubtfulStatusBadge");
+      if (isDoubtful) {
+        doubtfulBadge.classList.remove("hidden");
+        doubtfulBadge.classList.add("inline-flex");
+      } else {
+        doubtfulBadge.classList.add("hidden");
+        doubtfulBadge.classList.remove("inline-flex");
+      }
+
+      // Update status tombol navigasi (Sebelumnya & Selanjutnya)
+      document.getElementById("btnPrev").disabled = examState.currentIndex === 0;
+
+      // Perbarui tampilan warna kotak nomor di sidebar
+      updateSidebarGrid();
+      updateStatistics();
+    }
+
+    /* =========================================================================
+       FUNGSI 2: MEMILIH OPSI JAWABAN
+       ========================================================================= */
+    function selectAnswer(optionKey) {
+      const q = questionsData[examState.currentIndex];
+      
+      // Simpan jawaban siswa ke dalam state
+      examState.userAnswers[q.id] = optionKey;
+
+      // Re-render konten soal dan sidebar untuk merefleksikan perubahan warna
+      renderCurrentQuestion();
+    }
+
+    /* =========================================================================
+       FUNGSI 3: TOGGLE STATUS RAGU-RAGU
+       ========================================================================= */
+    function toggleDoubtfulCurrentQuestion() {
+      const q = questionsData[examState.currentIndex];
+      const checkbox = document.getElementById("doubtfulCheckbox");
+
+      // Simpan status ragu ke dalam state
+      examState.doubtfulStatus[q.id] = checkbox.checked;
+
+      // Re-render
+      renderCurrentQuestion();
+    }
+
+    /* =========================================================================
+       FUNGSI 4: PERPINDAHAN SOAL (SEBELUMNYA / SELANJUTNYA)
+       delta: -1 untuk mundur, 1 untuk maju
+       ========================================================================= */
+    function navigateQuestion(delta) {
+      const newIndex = examState.currentIndex + delta;
+      if (newIndex >= 0 && newIndex < questionsData.length) {
+        examState.currentIndex = newIndex;
+        renderCurrentQuestion();
+      }
+    }
+
+    /* =========================================================================
+       FUNGSI 5: LONCAT LANGSUNG KE NOMOR SOAL TERTENTU
+       Dipanggil saat siswa mengklik nomor kotak di sidebar
+       ========================================================================= */
+    function jumpToQuestion(index) {
+      if (index >= 0 && index < questionsData.length) {
+        examState.currentIndex = index;
+        renderCurrentQuestion();
+      }
+    }
+
+    /* =========================================================================
+       FUNGSI 6: MEMBANGUN GRID NAVIGASI SIDEBAR
+       Membuat tombol kotak nomor soal 1..N
+       ========================================================================= */
+    function buildQuestionNavigationGrid() {
+      const grid = document.getElementById("questionNumberGrid");
+      grid.innerHTML = "";
+
+      questionsData.forEach((q, idx) => {
+        const btn = document.createElement("button");
+        btn.id = `nav-btn-${idx}`;
+        btn.type = "button";
+        btn.onclick = () => jumpToQuestion(idx);
+        btn.innerText = idx + 1;
+        btn.className = "h-11 rounded-xl text-sm font-bold flex items-center justify-center border transition-all duration-150";
+        grid.appendChild(btn);
+      });
+
+      updateSidebarGrid();
+    }
+
+    /* =========================================================================
+       FUNGSI 7: UPDATE WARNA KOTAK NOMOR DI SIDEBAR (SESUAI LOGIKA CBT)
+       Aturan Warna:
+       - Kuning  : Jika ditandai ragu-ragu (meskipun sudah/belum dijawab)
+       - Hijau   : Jika sudah dijawab dan tidak ragu
+       - Abu-abu : Jika belum dijawab
+       - Ring Biru: Menandakan nomor soal yang sedang aktif dibuka
+       ========================================================================= */
+    function updateSidebarGrid() {
+      questionsData.forEach((q, idx) => {
+        const btn = document.getElementById(`nav-btn-${idx}`);
+        if (!btn) return;
+
+        const isCurrent = idx === examState.currentIndex;
+        const isAnswered = examState.userAnswers[q.id] !== undefined;
+        const isDoubtful = !!examState.doubtfulStatus[q.id];
+
+        // Reset base classes
+        let colorClasses = "";
+
+        if (isDoubtful) {
+          // KUNING: Ragu-ragu
+          colorClasses = "bg-amber-400 text-amber-950 border-amber-500 hover:bg-amber-500 shadow-xs";
+        } else if (isAnswered) {
+          // HIJAU: Sudah dijawab
+          colorClasses = "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600 shadow-xs";
+        } else {
+          // ABU-ABU: Belum dijawab
+          colorClasses = "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200";
+        }
+
+        // Jika merupakan soal yang sedang aktif dibuka, tambahkan fokus ring tebal
+        const activeIndicator = isCurrent 
+          ? "ring-3 ring-offset-2 ring-blue-600 scale-105 z-10" 
+          : "scale-100";
+
+        btn.className = `h-11 rounded-xl text-sm font-bold flex items-center justify-center border transition-all duration-150 ${colorClasses} ${activeIndicator}`;
+      });
+    }
+
+    /* =========================================================================
+       FUNGSI 8: UPDATE STATISTIK KEMAJUAN UJIAN
+       ========================================================================= */
+    function updateStatistics() {
+      let answeredCount = 0;
+      let doubtfulCount = 0;
+
+      questionsData.forEach(q => {
+        if (examState.userAnswers[q.id] !== undefined) answeredCount++;
+        if (examState.doubtfulStatus[q.id]) doubtfulCount++;
+      });
+
+      const total = questionsData.length;
+      const unansweredCount = total - answeredCount;
+
+      // Update badge header
+      document.getElementById("answeredStatsBadge").innerText = `${answeredCount} / ${total} Terjawab`;
+
+      // Update ringkasan kecil di sidebar
+      document.getElementById("statAnswered").innerText = answeredCount;
+      document.getElementById("statDoubtful").innerText = doubtfulCount;
+      document.getElementById("statUnanswered").innerText = unansweredCount;
+    }
+
+    /* =========================================================================
+       FUNGSI 9: COUNTDOWN TIMER 90 MENIT
+       Menghitung mundur detik demi detik, berkedip merah saat sisa waktu < 5 menit
+       ========================================================================= */
+    function startCountdown() {
+      const timerElement = document.getElementById("countdownTimer");
+      const timerCard = document.getElementById("timerCard");
+
+      function tick() {
+        if (examState.totalSeconds <= 0) {
+          clearInterval(examState.timerInterval);
+          timerElement.innerText = "00:00:00";
+          alert("Waktu ujian telah habis! Jawaban Anda akan dikumpulkan secara otomatis.");
+          submitExam();
+          return;
+        }
+
+        const hours = Math.floor(examState.totalSeconds / 3600);
+        const minutes = Math.floor((examState.totalSeconds % 3600) / 60);
+        const seconds = examState.totalSeconds % 60;
+
+        // Format 2 digit (HH:MM:SS)
+        const formatted = 
+          String(hours).padStart(2, '0') + ":" +
+          String(minutes).padStart(2, '0') + ":" +
+          String(seconds).padStart(2, '0');
+
+        timerElement.innerText = formatted;
+
+        // Jika sisa waktu kurang dari 5 menit (300 detik), beri warna peringatan merah
+        if (examState.totalSeconds <= 300) {
+          timerElement.classList.remove("text-emerald-400");
+          timerElement.classList.add("text-rose-400", "animate-pulse");
+          timerCard.classList.add("border-rose-500");
+        }
+
+        examState.totalSeconds--;
+      }
+
+      tick(); // Panggil sekali langsung
+      examState.timerInterval = setInterval(tick, 1000);
+    }
+
+    /* =========================================================================
+       FUNGSI 10: MODAL KONFIRMASI SELESAI UJIAN
+       ========================================================================= */
+    function openFinishModal() {
+      let answered = 0;
+      let doubtful = 0;
+
+      questionsData.forEach(q => {
+        if (examState.userAnswers[q.id] !== undefined) answered++;
+        if (examState.doubtfulStatus[q.id]) doubtful++;
+      });
+
+      const unanswered = questionsData.length - answered;
+
+      document.getElementById("modalStatAnswered").innerText = `${answered} Soal`;
+      document.getElementById("modalStatDoubtful").innerText = `${doubtful} Soal`;
+      document.getElementById("modalStatUnanswered").innerText = `${unanswered} Soal`;
+
+      const warningText = document.getElementById("modalWarningText");
+      if (unanswered > 0 || doubtful > 0) {
+        warningText.innerText = `⚠️ Perhatian: Anda masih memiliki ${unanswered} soal belum dijawab dan ${doubtful} soal ragu-ragu!`;
+      } else {
+        warningText.innerText = "✅ Hebat! Seluruh soal telah Anda jawab dengan yakin.";
+      }
+
+      document.getElementById("finishModal").classList.remove("hidden");
+    }
+
+    function closeFinishModal() {
+      document.getElementById("finishModal").classList.add("hidden");
+    }
+
+    /* =========================================================================
+       FUNGSI 11: KIRIM JAWABAN (SUBMIT)
+       Menghitung nilai secara instan untuk simulasi CBT
+       ========================================================================= */
+    function submitExam() {
+      // Hentikan timer
+      clearInterval(examState.timerInterval);
+      closeFinishModal();
+
+      // Hitung skor
+      let correctCount = 0;
+      questionsData.forEach(q => {
+        if (examState.userAnswers[q.id] === q.correctAnswer) {
+          correctCount++;
+        }
+      });
+
+      const total = questionsData.length;
+      const score = Math.round((correctCount / total) * 100);
+
+      // Tampilkan hasil di modal akhir
+      const resultCard = document.getElementById("resultScoreCard");
+      resultCard.innerHTML = `
+        <div class="flex justify-between py-1 border-b border-slate-200">
+          <span class="text-slate-600">Mata Pelajaran:</span>
+          <strong>Informatika SMP</strong>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-200">
+          <span class="text-slate-600">Jumlah Soal:</span>
+          <strong>${total} Butir</strong>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-200">
+          <span class="text-slate-600">Jawaban Benar:</span>
+          <strong class="text-emerald-600">${correctCount} Soal</strong>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-200">
+          <span class="text-slate-600">Jawaban Salah/Kosong:</span>
+          <strong class="text-rose-600">${total - correctCount} Soal</strong>
+        </div>
+        <div class="flex justify-between items-center pt-2">
+          <span class="text-base font-bold text-slate-800">Skor Akhir:</span>
+          <span class="text-2xl font-black text-blue-600">${score} / 100</span>
+        </div>
+      `;
+
+      document.getElementById("resultModal").classList.remove("hidden");
+    }
+
+    /* =========================================================================
+       FITUR TAMBAHAN: PENGATUR UKURAN FONT SOAL
+       ========================================================================= */
+    function changeFontSize(size) {
+      const body = document.getElementById("questionBody");
+      body.classList.remove("text-sm", "text-base", "text-lg");
+      if (size === 'small') body.classList.add("text-sm");
+      if (size === 'normal') body.classList.add("text-base");
+      if (size === 'large') body.classList.add("text-lg");
+    }
+  </script>
+
+</body>
+</html>
